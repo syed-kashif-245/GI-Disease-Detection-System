@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GI Disease Detection</title>
+
+    <!-- 🔥 CSS DESIGN -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #1f4037, #99f2c8);
+            text-align: center;
+            color: white;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            margin-top: 50px;
+            background: rgba(0,0,0,0.6);
+            padding: 30px;
+            border-radius: 15px;
+            display: inline-block;
+            width: 60%;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        input[type="file"] {
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+        }
+
+        button {
+            margin-top: 15px;
+            padding: 10px 20px;
+            border: none;
+            background: #00c9a7;
+            color: white;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #009e88;
+        }
+
+        .result {
+            margin-top: 20px;
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        canvas {
+            margin-top: 20px;
+        }
+
+        .stage {
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        .remedy {
+            margin-top: 10px;
+            font-size: 18px;
+            color: #ffd700;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>🧠 GI Disease Detection System</h1>
+
+    <!-- Upload Form -->
+    <form action="/predict" method="post" enctype="multipart/form-data">
+        <input type="file" name="image" required>
+        <br><br>
+        <button type="submit">Predict</button>
+    </form>
+
+    <!-- RESULT SECTION -->
+    {% if prediction %}
+    <div class="result">
+        <h2>Prediction: {{ prediction }}</h2>
+
+        <p class="stage">Stage: {{ stage }}</p>
+
+        <p class="remedy">💊 {{ remedy }}</p>
+
+        <!-- 📊 BAR CHART -->
+        <canvas id="chart" width="400" height="200"></canvas>
+    </div>
+
+    <!-- Chart Script -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        const data = {
+            labels: {{ classes | safe }},
+            datasets: [{
+                label: 'Confidence (%)',
+                data: {{ probs | safe }},
+                backgroundColor: ['#2ecc71', '#f39c12', '#e74c3c']
+            }]
+        };
+
+        new Chart(document.getElementById('chart'), {
+            type: 'bar',
+            data: data,
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100
+                    }
+                }
+            }
+        });
+    </script>
+
+    {% endif %}
+
+</div>
+
+</body>
+</html>
